@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by Hima on 3/23/2016.
- */
 public class GridViewAdapter extends ArrayAdapter<Movie> {
     private Context mContext;
     private int layoutResourceId;
@@ -41,7 +38,7 @@ public class GridViewAdapter extends ArrayAdapter<Movie> {
         else{
             image = (ImageView)row.getTag();
         }
-         Picasso.with(mContext).load(mGridImages.get(position).getMoviePoster()).into(image);
+         Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185/" + mGridImages.get(position).getMoviePoster()).into(image);
         return row;
     }
 }

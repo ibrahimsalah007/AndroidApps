@@ -98,14 +98,16 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
                 DB = new MovieDBHelper(getActivity());
                 DB.insertMovie(myMovieObject);
                 Toast.makeText(getActivity(), "Added to Favourite List", Toast.LENGTH_SHORT).show();
-               }
-            else {
                 favourite.setText("Remove From Favourite");
+            }
+            else {
+                //favourite.setText("Remove From Favourite");
                 DB = new MovieDBHelper(getActivity());
                 DB.deleteMovie(myMovieObject.getiD());
 
                 Toast.makeText(getActivity(), "Removed from Favourite List", Toast.LENGTH_SHORT).show();
                 myMovieObject.insertedToDB=false;
+                favourite.setText("Add to favorite");
             }
         }
         else if (v.getId()==R.id.reviews){
@@ -125,7 +127,7 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
     public void UpdateData(Movie movie){
         myMovieObject = movie;
         if(myMovieObject!=null) {
-            Picasso.with(getContext()).load(myMovieObject.getMoviePoster()).into(poster);
+            Picasso.with(getContext()).load("http://image.tmdb.org/t/p/w185/" + myMovieObject.getMoviePoster()).into(poster);
             title.setText(myMovieObject.getTitle());
             vote.setText(myMovieObject.getVoteAverage());
             review.setText(myMovieObject.getPlotSynopsis());
