@@ -4,12 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable {
-   private String  title, release_data, moviePoster, voteAverage, plotSynopsis, iD;
+    private String title, release_data, moviePoster, voteAverage, plotSynopsis, iD;
     public boolean insertedToDB;
 
-    public Movie(){
-            insertedToDB=false;
-      }
+    public Movie() {
+        insertedToDB = false;
+    }
 
     protected Movie(Parcel in) {
         title = in.readString();
@@ -32,47 +32,56 @@ public class Movie implements Parcelable {
         }
     };
 
-    public void setTitle(String title){
-        this.title=title;
+    public void setTitle(String title) {
+        this.title = title;
     }
-    public void setRelease_data(String release_data){
-        if(release_data.length()>4) {
+
+    public void setRelease_data(String release_data) {
+        if (release_data.length() > 4) {
             release_data = release_data.substring(0, 4);
         }
-        this.release_data =release_data;
+        this.release_data = release_data;
     }
-    public void setMoviePoster(String moviePoster){
-        String MOVIES_BASE_URL= "http://image.tmdb.org/t/p/w185/";
-        this.moviePoster= MOVIES_BASE_URL+moviePoster;
+
+    public void setMoviePoster(String moviePoster) {
+        //String MOVIES_BASE_URL= "http://image.tmdb.org/t/p/w185/";
+        this.moviePoster = moviePoster;
     }
-    public void setiD(String iD){
-        this.iD=iD;
+
+    public void setiD(String iD) {
+        this.iD = iD;
     }
-    public void setVoteAverage(String voteAverage){
-        this.voteAverage=voteAverage;
+
+    public void setVoteAverage(String voteAverage) {
+        this.voteAverage = voteAverage;
     }
-    public void setPlotSynopsis(String plotSynopsis){
-        this.plotSynopsis= plotSynopsis;
+
+    public void setPlotSynopsis(String plotSynopsis) {
+        this.plotSynopsis = plotSynopsis;
     }
 
 
-
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
-    public String getRelease_data(){
+
+    public String getRelease_data() {
         return release_data;
     }
-    public String getMoviePoster(){
+
+    public String getMoviePoster() {
         return moviePoster;
     }
-    public String getVoteAverage(){
+
+    public String getVoteAverage() {
         return voteAverage;
     }
-    public String getPlotSynopsis(){
+
+    public String getPlotSynopsis() {
         return plotSynopsis;
     }
-    public String getiD(){
+
+    public String getiD() {
         return iD;
     }
 
