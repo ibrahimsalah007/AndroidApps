@@ -240,8 +240,8 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
                 list.setAdapter(adapter);
             }else {
                 Toast.makeText(getActivity(), "You Are No Connected ", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getActivity(), ConnectionFail.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), ConnectionFail.class);
+//                startActivity(intent);
                 getActivity().finish();
             }
         }
