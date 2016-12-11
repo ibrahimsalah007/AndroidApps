@@ -14,8 +14,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait">
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +27,6 @@
             android:label="@string/title_activity_detailed"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -40,15 +38,13 @@
             android:screenOrientation="portrait">
             </activity>
         <activity android:name=".SettingActivity"
-            android:screenOrientation="portrait"
         />
 
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".MainActivity" />
 
-        <activity android:name=".ConnectionFail"
-            android:screenOrientation="portrait">
+        <activity android:name=".ConnectionFail">
         </activity>
     </application>
 
