@@ -38,24 +38,27 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
     public String id;
     public ListView list;
     Movie myMovieObject;
-    private  List<Trailers> data;
+    private List<Trailers> data;
     FetchTrailer fetch;
     Button rev;
-    Button favourite ;
+    Button favourite;
     String sortingmethod;
     MovieDBHelper DB;
-    TextView title,vote,release,review ;
+    TextView title, vote, release, review;
     ImageView poster;
     SharedPreferences sharedPreferences;
+    Intent intent;
+
     public DetailedActivityFragment() {
     }
+
 
     @Override
     public void onResume() {
         super.onResume();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sortingmethod = sharedPreferences.getString(getString(R.string.sort_type), getString(R.string.pref_default_value));
-        if(sortingmethod.equals("favourite"))
+        if (sortingmethod.equals("favourite"))
             favourite.setText("Remove From Favourite");
     }
 
@@ -63,9 +66,10 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View rootView = inflater.inflate(R.layout.fragment_detailed, container, false);
         View header = inflater.inflate(R.layout.header, null, false);
-        list = (ListView)rootView.findViewById(R.id.list_trailers);
+        list = (ListView) rootView.findViewById(R.id.list_trailers);
         list.addHeaderView(header);
 
         rev = (Button) rootView.findViewById(R.id.reviews);
@@ -81,11 +85,11 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
         favourite.setOnClickListener(this);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-             @Override
-             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(data.get(position-1).getKey())));
-             }
-         });
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(data.get(position - 1).getKey())));
+            }
+        });
 
         return rootView;
     }
@@ -93,40 +97,38 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.favor_id) {
-            if(favourite.getText().toString().equals("Add to favorite")) {
+        if (v.getId() == R.id.favor_id) {
+            if (favourite.getText().toString().equals("Add to favorite")) {
                 DB = new MovieDBHelper(getActivity());
                 DB.insertMovie(myMovieObject);
                 Toast.makeText(getActivity(), "Added to Favourite List", Toast.LENGTH_SHORT).show();
                 favourite.setText("Remove From Favourite");
-            }
-            else {
+            } else {
                 //favourite.setText("Remove From Favourite");
                 DB = new MovieDBHelper(getActivity());
                 DB.deleteMovie(myMovieObject.getiD());
 
                 Toast.makeText(getActivity(), "Removed from Favourite List", Toast.LENGTH_SHORT).show();
-                myMovieObject.insertedToDB=false;
+                myMovieObject.insertedToDB = false;
                 favourite.setText("Add to favorite");
             }
-        }
-        else if (v.getId()==R.id.reviews){
-         Intent intent = new Intent(getActivity(), Review.class);
-         intent.putExtra("id", id);
-         startActivity(intent);
+        } else if (v.getId() == R.id.reviews) {
+            Intent intent = new Intent(getActivity(), Review.class);
+            intent.putExtra("id", id);
+            startActivity(intent);
         }
     }
 
-    public Movie getMovieObject(){
-        if(getArguments()!=null&&getArguments().getParcelable("movie")!=null) {
+    public Movie getMovieObject() {
+        if (getArguments() != null && getArguments().getParcelable("movie") != null) {
             myMovieObject = getArguments().getParcelable("movie");
         }
         return myMovieObject;
     }
 
-    public void UpdateData(Movie movie){
+    public void UpdateData(Movie movie) {
         myMovieObject = movie;
-        if(myMovieObject!=null) {
+        if (myMovieObject != null) {
             Picasso.with(getContext()).load("http://image.tmdb.org/t/p/w185/" + myMovieObject.getMoviePoster()).into(poster);
             title.setText(myMovieObject.getTitle());
             vote.setText(myMovieObject.getVoteAverage());
@@ -136,110 +138,137 @@ public class DetailedActivityFragment extends Fragment implements View.OnClickLi
             fetch = new FetchTrailer();
             fetch.execute();
         }
-  }
+    }
+
     public boolean isNetworkAvailable(final Context context) {
         final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
     }
 
 
-    class FetchTrailer extends AsyncTask<String, Void, List<Trailers> > {
-       private final String LOG_TAG = FetchTrailer.class.getSimpleName();
-       public ArrayAdapter<Trailers>  adapter;
+    class FetchTrailer extends AsyncTask<String, Void, List<Trailers>> {
+        private final String LOG_TAG = FetchTrailer.class.getSimpleName();
+        public ArrayAdapter<Trailers> adapter;
 
-       public List<Trailers> getMovieTrailerFromJson(String MovieJsonStr)
-               throws JSONException{
-           data = new ArrayList<Trailers>();
-           final String WEB_RESULT = "results";
-           JSONObject initial = new JSONObject(MovieJsonStr);
-           JSONArray moviesArray = initial.getJSONArray(WEB_RESULT);
-           if(moviesArray==null){
-               return null;
-           }
-           else{
-               for(int i=0;i<moviesArray.length();i++){
-                   JSONObject movieDetail = moviesArray.getJSONObject(i);
-                   Trailers trailer = new Trailers();
-                   trailer.setId(movieDetail.getString("id"));
-                   trailer.setKey(movieDetail.getString("key"));
-                   trailer.setName(movieDetail.getString("name"));
-                   data.add(trailer);
-               }
-           }
-           return data;
-       }
-       @Override
-       protected List<Trailers> doInBackground(String... params) {
+        public List<Trailers> getMovieTrailerFromJson(String MovieJsonStr)
+                throws JSONException {
+            data = new ArrayList<Trailers>();
+            final String WEB_RESULT = "results";
+            JSONObject initial = new JSONObject(MovieJsonStr);
+            JSONArray moviesArray = initial.getJSONArray(WEB_RESULT);
+            if (moviesArray == null) {
+                return null;
+            } else {
+                for (int i = 0; i < moviesArray.length(); i++) {
+                    JSONObject movieDetail = moviesArray.getJSONObject(i);
+                    Trailers trailer = new Trailers();
+                    trailer.setId(movieDetail.getString("id"));
+                    trailer.setKey(movieDetail.getString("key"));
+                    trailer.setName(movieDetail.getString("name"));
+                    data.add(trailer);
+                }
+            }
+            return data;
+        }
 
-           HttpURLConnection urlConnection = null;
-           BufferedReader reader = null;
-           String MovieJsonStr = null;
-           Uri builtUri;
+        @Override
+        protected List<Trailers> doInBackground(String... params) {
 
-           try {
-               final String FETCH_MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
-               final String API_KEY = "api_key";
-               builtUri = Uri.parse(FETCH_MOVIE_BASE_URL).buildUpon()
-                       .appendPath(id)
-                       .appendPath("videos")
-                       .appendQueryParameter(API_KEY, BuildConfig.Movie_App_API_KEY)
-                       .build();
-               URL url = new URL(builtUri.toString());
-               urlConnection = (HttpURLConnection) url.openConnection();
-               urlConnection.setRequestMethod("GET");
-               urlConnection.connect();
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            String MovieJsonStr = null;
+            Uri builtUri;
 
-               InputStream inputStream = urlConnection.getInputStream();
-               StringBuffer buffer = new StringBuffer();
+            try {
+                final String FETCH_MOVIE_BASE_URL = "http://api.themoviedb.org/3/movie/";
+                final String API_KEY = "api_key";
+                builtUri = Uri.parse(FETCH_MOVIE_BASE_URL).buildUpon()
+                        .appendPath(id)
+                        .appendPath("videos")
+                        .appendQueryParameter(API_KEY, BuildConfig.Movie_App_API_KEY)
+                        .build();
+                URL url = new URL(builtUri.toString());
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
 
-               if (inputStream == null) {
-                   Log.d(LOG_TAG, "input stream is null");
-                   return null;
-               }
-               reader = new BufferedReader(new InputStreamReader(inputStream));
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuffer buffer = new StringBuffer();
 
-               String line;
-               while ((line = reader.readLine()) != null) {
-                   buffer.append(line + "\n");
-               }
-               if (buffer.length() == 0){
-                   return null;
-               }
-               MovieJsonStr = buffer.toString();
-           }catch(IOException e) {
-               Log.e(LOG_TAG, "Error ", e);
-               return null;
-           } finally {
-               if (urlConnection != null) {
-                   urlConnection.disconnect();
-               }
-               if (reader != null) {
-                   try {
-                       reader.close();
-                   } catch (final IOException e) {
-                       Log.e(LOG_TAG, "Error closing stream", e);
-                   }
-               }
-           }
-           try {
-               return getMovieTrailerFromJson(MovieJsonStr);
+                if (inputStream == null) {
+                    Log.d(LOG_TAG, "input stream is null");
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
 
-           } catch (JSONException e) {
-               e.printStackTrace();
-           }
-           return null;
-       }
-       @Override
-       protected void onPostExecute(List<Trailers> result) {
-           if (isNetworkAvailable(getContext())) {
-               adapter = new ArrayAdapter<Trailers>(getActivity(), R.layout.trailer_list_item,R.id.trailers_text_view, result);
-               list.setAdapter(adapter);
-           }
-           else {
-               adapter = new ArrayAdapter<Trailers>(getActivity(),  R.layout.trailer_list_item,R.id.trailers_text_view, data);
-               list.setAdapter(adapter);
-           }
-       }
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line + "\n");
+                }
+                if (buffer.length() == 0) {
+                    return null;
+                }
+                MovieJsonStr = buffer.toString();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+            try {
+                return getMovieTrailerFromJson(MovieJsonStr);
 
-   }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Trailers> result) {
+            if (InternetConnectionStatus.getInstance(getActivity()).isOnline()) {
+                adapter = new ArrayAdapter<Trailers>(getActivity(), R.layout.trailer_list_item, R.id.trailers_text_view, data);
+                list.setAdapter(adapter);
+            }else {
+                Toast.makeText(getActivity(), "You Are No Connected ", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), ConnectionFail.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        }
+//        @Override
+//        protected void onPostExecute(List<Trailers> result) {
+//            if (isNetworkAvailable(getContext())) {
+//                adapter = new ArrayAdapter<Trailers>(getActivity(), R.layout.trailer_list_item, R.id.trailers_text_view, result);
+//                list.setAdapter(adapter);
+//            } else {
+//                adapter = new ArrayAdapter<Trailers>(getActivity(), R.layout.trailer_list_item, R.id.trailers_text_view, data);
+//                list.setAdapter(adapter);
+//            }
+//        }
+
+    }
+
+    public void checkForInternet() {
+
+        if (InternetConnectionStatus.getInstance(getActivity()).isOnline()) {
+            Toast.makeText(getActivity(), "Connected Successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "You Are No Connected ", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), ConnectionFail.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    }
+
+
 }
